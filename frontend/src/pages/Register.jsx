@@ -19,7 +19,7 @@ function Register() {
 									<div className="flex flex-col items-center text-center">
 										<h1 className="text-2xl font-bold">Create your account</h1>
 										<p className="text-muted-foreground text-balance">
-											Create Acme Inc account
+											Create DearFutureMe account
 										</p>
 									</div>
 									<div className="grid gap-3">
