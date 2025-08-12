@@ -19,7 +19,7 @@ export default function Landing() {
 						<div className="flex items-center space-x-2">
 							<Clock className="h-8 w-8 text-blue-600" />
 							<span className="text-2xl font-bold text-slate-900 dark:text-white">
-								TimeCapsule
+								DearFutureMe
 							</span>
 						</div>
 						<div className="flex items-center space-x-4">
@@ -76,7 +76,7 @@ export default function Landing() {
 				<div className="max-w-7xl mx-auto">
 					<div className="text-center mb-16">
 						<h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-							Why Choose TimeCapsule?
+							Why Choose DearFutureMe?
 						</h2>
 						<p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
 							Discover the features that make preserving your memories simple,
@@ -194,7 +194,7 @@ export default function Landing() {
 						<div className="md:col-span-2">
 							<div className="flex items-center space-x-2 mb-4">
 								<Clock className="h-8 w-8 text-blue-400" />
-								<span className="text-2xl font-bold">TimeCapsule</span>
+								<span className="text-2xl font-bold">DearFutureMe</span>
 							</div>
 							<p className="text-slate-400 max-w-md">
 								Preserve your memories and create meaningful connections with
@@ -261,7 +261,7 @@ export default function Landing() {
 						</div>
 					</div>
 					<div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
-						<p>&copy; 2025 TimeCapsule. All rights reserved.</p>
+						<p>&copy; 2025 DearFutureMe. All rights reserved.</p>
 					</div>
 				</div>
 			</footer>
