@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { Button } from "./ui/button";
-import { Clock, Mail, LogOut, PenTool, Menu, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { Clock, Mail, LogOut, PenTool, Menu, X } from "lucide-react";
+
+import { Button } from "./ui/button";
+
+import useAuthStore from "@/store/useAuthStore";
 
 export default function Header() {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const { logout } = useAuthStore();
 
 	return (
 		<nav className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
@@ -49,6 +53,7 @@ export default function Header() {
 							variant="outline"
 							size="sm"
 							className="flex items-center space-x-2"
+							onClick={logout}
 						>
 							<LogOut className="h-4 w-4" />
 							<span>Logout</span>
