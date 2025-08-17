@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Save, Calendar, Lock, FileText } from "lucide-react";
+
 import { Button } from "../components/ui/button";
 import {
 	Card,
@@ -9,8 +11,9 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Save, Calendar, Lock, FileText } from "lucide-react";
 import Header from "../components/Header";
+
+import useAuthStore from "@/store/useAuthStore";
 
 export default function WriteLetter() {
 	const [formData, setFormData] = useState({
@@ -21,6 +24,8 @@ export default function WriteLetter() {
 	});
 
 	const [isLoading, setIsLoading] = useState(false);
+
+	const { authUser } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -57,7 +62,9 @@ export default function WriteLetter() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				<div className="max-w-4xl mb-4">
 					<h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-						Write Your Letter
+						{authUser
+							? `Welcome back, ${authUser.email}!`
+							: "Welcome to DearFutureMe"}
 					</h1>
 					<p className="text-lg text-slate-600 dark:text-slate-300">
 						Create a message for your future self or loved ones to discover.

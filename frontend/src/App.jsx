@@ -40,7 +40,7 @@ function App() {
 				/>
 				<Route
 					path="/letters"
-					element={<Letters />}
+					element={authUser ? <Letters /> : <Navigate to="/login" />}
 				/>
 				<Route
 					path="/login"

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import useAuthStore from "@/store/useAuthStore";
 
@@ -18,11 +18,17 @@ function Login() {
 		password: "",
 	});
 
-	const { login, isLoggingIn } = useAuthStore();
+	const { login, isLoggingIn, authUser } = useAuthStore();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (authUser) {
+			navigate("/write");
+		}
+	}, [authUser, navigate]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
 		login(formData);
 	};
 

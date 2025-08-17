@@ -112,7 +112,7 @@ export default function Header() {
 							<Button
 								variant="outline"
 								className="w-full justify-start space-x-3 mt-3"
-								onClick={() => setIsMobileMenuOpen(false)}
+								onClick={logout}
 							>
 								<LogOut className="h-5 w-5" />
 								<span>Logout</span>
