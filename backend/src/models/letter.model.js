@@ -24,3 +24,7 @@ const letterSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+const Letter = mongoose.model("Letter", letterSchema);
+
+export default Letter;
