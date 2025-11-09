@@ -11,6 +11,8 @@ import Letters from "./pages/Letters";
 
 import useAuthStore from "./store/useAuthStore";
 
+import { Toaster } from "react-hot-toast";
+
 function App() {
 	const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
@@ -32,7 +34,7 @@ function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={<Landing />}
+					element={authUser ? <Navigate to="/letters" /> : <Landing />}
 				/>
 				<Route
 					path="/write"
@@ -44,13 +46,15 @@ function App() {
 				/>
 				<Route
 					path="/login"
-					element={<Login />}
+					element={authUser ? <Navigate to="/letters" /> : <Login />}
 				/>
 				<Route
 					path="/register"
-					element={<Register />}
+					element={authUser ? <Navigate to="/letters" /> : <Register />}
 				/>
 			</Routes>
+
+			<Toaster />
 		</div>
 	);
 }

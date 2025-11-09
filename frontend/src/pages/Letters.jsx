@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	Card,
 	CardContent,
@@ -19,54 +19,40 @@ import {
 	Trash2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
 import Header from "../components/Header";
+import LetterModal from "../components/LetterModal";
+
+import axiosInstance from "@/lib/axios";
+
+import toast from "react-hot-toast";
 
 export default function Letters() {
 	const [searchTerm, setSearchTerm] = useState("");
+	const [letters, setLetters] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [selectedLetter, setSelectedLetter] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	// Mock data for letters - in a real app this would come from your backend
-	const [letters] = useState([
-		{
-			id: 1,
-			title: "A message to my 30-year-old self",
-			openDate: "2025-12-25",
-			hasPassword: true,
-			createdAt: "2025-01-15",
-			isOpened: false,
-		},
-		{
-			id: 2,
-			title: "Memories from college graduation",
-			openDate: "2026-05-20",
-			hasPassword: false,
-			createdAt: "2025-02-10",
-			isOpened: false,
-		},
-		{
-			id: 3,
-			title: "Goals for the next decade",
-			openDate: "2025-08-15",
-			hasPassword: true,
-			createdAt: "2025-01-01",
-			isOpened: true,
-		},
-		{
-			id: 4,
-			title: "Letter to my future family",
-			openDate: "2030-01-01",
-			hasPassword: false,
-			createdAt: "2025-03-05",
-			isOpened: false,
-		},
-		{
-			id: 5,
-			title: "Reflections on 2025",
-			openDate: "2026-01-01",
-			hasPassword: true,
-			createdAt: "2025-07-20",
-			isOpened: false,
-		},
-	]);
+	useEffect(() => {
+		const fetchLetters = async () => {
+			try {
+				const res = await axiosInstance.get("/letters", {
+					withCredentials: true,
+				});
+
+				console.log(res.data);
+				setLetters(res.data);
+			} catch (err) {
+				setError(err.response?.data?.message || "Failed to load letters");
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchLetters();
+	}, []);
 
 	// Filter letters based on search term
 	const filteredLetters = letters.filter((letter) =>
@@ -86,24 +72,82 @@ export default function Letters() {
 	};
 
 	const getStatusColor = (letter) => {
-		if (letter.isOpened) {
+		if (isDatePassed(letter.dateToBeOpened)) {
 			return "text-green-600 dark:text-green-400";
-		} else if (isDatePassed(letter.openDate)) {
-			return "text-blue-600 dark:text-blue-400";
 		} else {
 			return "text-slate-500 dark:text-slate-400";
 		}
 	};
 
 	const getStatusText = (letter) => {
-		if (letter.isOpened) {
-			return "Opened";
-		} else if (isDatePassed(letter.openDate)) {
-			return "Ready to open";
+		if (isDatePassed(letter.dateToBeOpened)) {
+			return "Open";
 		} else {
 			return "Scheduled";
 		}
 	};
+
+	// Handler to view a specific letter
+	const handleReadLetter = async (letterId) => {
+		try {
+			const res = await axiosInstance.get(`/letters/${letterId}`, {
+				withCredentials: true,
+			});
+
+			console.log("Fetched letter:", res.data);
+			setSelectedLetter(res.data);
+			setIsModalOpen(true);
+		} catch (err) {
+			console.error(
+				"Failed to fetch letter:",
+				err.response?.data || err.message
+			);
+		}
+	};
+
+	const handleDelete = async (letterId) => {
+		try {
+			const confirmDelete = confirm(
+				"Are you sure you want to delete this letter?"
+			);
+			if (!confirmDelete) return;
+
+			const deletingToast = toast.loading("Deleting letter...");
+
+			const res = await axiosInstance.delete(`/letters/${letterId}`, {
+				withCredentials: true,
+			});
+
+			toast.dismiss(deletingToast);
+
+			if (res.status === 200) {
+				toast.success("Letter deleted successfully");
+
+				setLetters((prevLetters) =>
+					prevLetters.filter((l) => l._id !== letterId)
+				);
+			} else {
+				toast.error(res.data?.message || "Failed to delete letter");
+			}
+		} catch (error) {
+			toast.dismiss();
+			toast.error(error.response?.data?.message || "Something went wrong");
+		}
+	};
+
+	if (isLoading)
+		return (
+			<div className="flex justify-center items-center h-screen text-slate-500">
+				Loading your letters...
+			</div>
+		);
+
+	if (error)
+		return (
+			<div className="flex justify-center items-center h-screen text-red-500">
+				{error}
+			</div>
+		);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -176,7 +220,7 @@ export default function Letters() {
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 						{filteredLetters.map((letter) => (
 							<Card
-								key={letter.id}
+								key={letter._id}
 								className="shadow-lg border-0 hover:shadow-xl transition-shadow duration-300"
 							>
 								<CardHeader className="pb-4">
@@ -188,12 +232,12 @@ export default function Letters() {
 											<div className="flex items-center space-x-2 text-sm">
 												<Calendar className="h-4 w-4 text-slate-500" />
 												<span className="text-slate-600 dark:text-slate-300">
-													Opens: {formatDate(letter.openDate)}
+													Opens: {formatDate(letter.dateToBeOpened)}
 												</span>
 											</div>
 										</div>
 										<div className="flex items-center space-x-2 ml-4">
-											{letter.hasPassword ? (
+											{letter.password && letter.password.trim() !== "" ? (
 												<Lock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
 											) : (
 												<Unlock className="h-5 w-5 text-slate-400" />
@@ -229,17 +273,17 @@ export default function Letters() {
 												variant="outline"
 												size="sm"
 												className="flex-1"
-												disabled={
-													!letter.isOpened && !isDatePassed(letter.openDate)
-												}
+												// disabled={!isDatePassed(letter.dateToBeOpened)}
+												onClick={() => handleReadLetter(letter._id)}
 											>
 												<Eye className="h-4 w-4 mr-2" />
-												{letter.isOpened ? "Read" : "Open"}
+												Read
 											</Button>
 											<Button
 												variant="outline"
 												size="sm"
 												className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+												onClick={() => handleDelete(letter._id)}
 											>
 												<Trash2 className="h-4 w-4" />
 											</Button>
@@ -291,6 +335,12 @@ export default function Letters() {
 					</div>
 				)}
 			</div>
+
+			<LetterModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				letter={selectedLetter}
+			/>
 		</div>
 	);
 }

@@ -15,6 +15,12 @@ import Header from "../components/Header";
 
 import useAuthStore from "@/store/useAuthStore";
 
+import axiosInstance from "@/lib/axios";
+
+import toast from "react-hot-toast";
+
+import { useNavigate } from "react-router-dom";
+
 export default function WriteLetter() {
 	const [formData, setFormData] = useState({
 		title: "",
@@ -26,6 +32,8 @@ export default function WriteLetter() {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { authUser } = useAuthStore();
+
+	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -39,12 +47,38 @@ export default function WriteLetter() {
 		e.preventDefault();
 		setIsLoading(true);
 
-		// Simulate API call
-		setTimeout(() => {
-			console.log("Letter saved:", formData);
+		try {
+			const letter = {
+				title: formData.title,
+				text: formData.message,
+				dateToBeOpened: formData.openDate,
+				password: formData.password || null,
+			};
+
+			const response = await axiosInstance.post("/letters/save", letter, {
+				withCredentials: true,
+			});
+
+			console.log("Letter saved:", response.data);
+
+			toast.success("Your letter has been put to capsule!");
+
+			setFormData({
+				title: "",
+				message: "",
+				openDate: "",
+				password: "",
+			});
+
+			navigate("/letters");
+		} catch (error) {
+			console.error(
+				"Error saving letter:",
+				error.response?.data || error.message
+			);
+		} finally {
 			setIsLoading(false);
-			// Here you would typically save to your backend
-		}, 2000);
+		}
 	};
 
 	const getTomorrowDate = () => {
