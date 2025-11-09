@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: "https://time-capsule-app-sable.vercel.app/",
+		origin: "https://time-capsule-app-sable.vercel.app",
 		credentials: true,
 	})
 );
