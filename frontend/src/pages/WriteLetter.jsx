@@ -55,9 +55,7 @@ export default function WriteLetter() {
 				password: formData.password || null,
 			};
 
-			const response = await axiosInstance.post("/letters/save", letter, {
-				withCredentials: true,
-			});
+			const response = await axiosInstance.post("/letters/save", letter);
 
 			console.log("Letter saved:", response.data);
 

@@ -38,9 +38,7 @@ export default function Letters() {
 	useEffect(() => {
 		const fetchLetters = async () => {
 			try {
-				const res = await axiosInstance.get("/letters", {
-					withCredentials: true,
-				});
+				const res = await axiosInstance.get("/letters");
 
 				console.log(res.data);
 				setLetters(res.data);
@@ -90,9 +88,7 @@ export default function Letters() {
 	// Handler to view a specific letter
 	const handleReadLetter = async (letterId) => {
 		try {
-			const res = await axiosInstance.get(`/letters/${letterId}`, {
-				withCredentials: true,
-			});
+			const res = await axiosInstance.get(`/letters/${letterId}`);
 
 			console.log("Fetched letter:", res.data);
 			setSelectedLetter(res.data);
@@ -114,9 +110,7 @@ export default function Letters() {
 
 			const deletingToast = toast.loading("Deleting letter...");
 
-			const res = await axiosInstance.delete(`/letters/${letterId}`, {
-				withCredentials: true,
-			});
+			const res = await axiosInstance.delete(`/letters/${letterId}`);
 
 			toast.dismiss(deletingToast);
 
